@@ -1,0 +1,9 @@
+.input{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    align-items: center;
+    margin: 1%;
+    font-family: "Roboto", sans-serif;
+    font-size: 14px;
+}

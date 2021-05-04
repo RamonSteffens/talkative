@@ -1,0 +1,46 @@
+.Login {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+    font-family: "Roboto", sans-serif;
+    font-size: 14px;
+}
+
+.loginLeft {
+    flex: 2;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.inputForm{
+    box-shadow: 0 0 20px 0 rgb(0 0 0 / 20%), 0 5px 5px 0 rgb(0 0 0 / 24%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+    height: 60%;
+}
+
+.loginRight {
+    flex: auto;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.buttonLogin {
+    font-size: 14px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin: 1%;
+}
+
+.imgLogin{
+    height: 100%;
+    margin-right: auto;
+}
