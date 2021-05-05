@@ -1,0 +1,8 @@
+.botoes {
+    display: flex;
+    flex-direction: row;
+}
+
+.botao{
+    margin: 5%;
+}

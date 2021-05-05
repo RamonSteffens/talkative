@@ -4,12 +4,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import './Cadastre.css';
 import Input from './input/Input';
 import img from '../img/MeetOnl.webp'
-
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 
 function Cadastre() {
   const [isCreated, setIsCreated] = useState(false)
   const [emailError, setEmailError] = useState(false)
+  const [isLogin, setIsLogin] = useState(false)
+
 
   const nameRef = useRef(null);
   const emailRef = useRef(null);
@@ -65,6 +68,18 @@ function Cadastre() {
     }, 5000);
   }, [emailError])
 
+  const onClickRegister = useCallback(()=>{
+    setIsLogin(true)
+  },[])
+
+
+  function register() {
+    if (isLogin) {
+        console.log("register")
+      return <Redirect to="/register" />;
+    }
+  }
+
   return (
     <div className="Cadastre">
       <div className="registerLeft">
@@ -79,7 +94,7 @@ function Cadastre() {
           {emailError && <Alert key='1' variant='danger'>Email já cadastrado ou inválido!</Alert>}
           <Input placeholder="senha" type="password" name="Senha" childRef={passRef} id="password" />
           <Button className="buttonRegister" size="sm" onClick={onClickCadastrar} >Cadastrar</Button>
-          <a href="#/login">Voltar para tela de login</a>
+          <a href="/login" onClick={onClickRegister} >Voltar para tela de login</a>
           {isCreated && 
           <Alert variant="success" style={{ position: "absolute" }} onClose={() => setIsCreated(false)} dismissible>
             <Alert.Heading>Seja bem vindo ao Talkative!</Alert.Heading>
@@ -91,4 +106,11 @@ function Cadastre() {
   );
 }
 
-export default Cadastre;
+const mapStateToProps = (store) => {
+  return {
+    user: store.UserReducer.user,
+    logged: store.UserReducer.logged,
+  };
+};
+
+export default connect(mapStateToProps)(Cadastre);
