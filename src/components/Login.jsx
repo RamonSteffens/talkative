@@ -1,79 +1,84 @@
-import axios from 'axios';
-import { Button } from 'react-bootstrap';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import Card from './card/Card';
+import { Button, Form } from 'react-bootstrap';
+import { useRef, useState } from 'react';
 import Input from './input/Input';
 import './Login.css'
 import Logo from '../img/Logo.png'
+import { Redirect } from 'react-router-dom';
+import UserService from '../data/user.service';
+import Menu from './Menu';
 
-function Login() {
-    const [logedUser, setLogedUser] = useState({})
-    const [isLoged, setIsLoged] = useState(false)
+const Login = (props) => {
+  const [isRegister, setIsRegister] = useState(false)
+  const [isLogin, setIsLogin] = useState(false)
 
-    const emailLogRef = useRef(null);
-    const passLogRef = useRef(null);
+  const emailLogRef = useRef(null);
+  const passLogRef = useRef(null);
 
-    const cleanInputsLog = () => {
-        emailLogRef.current.value = "";
-        passLogRef.current.value = "";
+  const userService = UserService.get()
+
+  const loginUser = async () => {
+    const newUser = {
+      email: emailLogRef.current.value,
+      password: passLogRef.current.value
     }
+    
+    let response = await userService.userLogin(newUser)
 
-    const onClickEntrar = () => {
-        loginUser()
+    if (response.status === 200 ){
+      cleanInputsLog()
+      localStorage.setItem("userLoged", JSON.stringify(response.data))
+      localStorage.setItem("isLogged", true)
+      setIsLogin(true)
+    }else{
+      console.log(response)
     }
+  }
 
-    const onClickSair = () => {
-        setLogedUser({})
-        setIsLoged(false)
-        localStorage.clear()
+  const cleanInputsLog = () => {
+    emailLogRef.current.value = "";
+    passLogRef.current.value = "";
+  }
+
+  const onClickEntrar = () => {
+    loginUser()
+  }
+
+
+  function isLogged() {
+    if (isLogin) {
+      return <Redirect to="/home" />;
     }
+  }
 
-    const loginUser = useCallback(() => {
-        const newUser = {
-            email: emailLogRef.current.value,
-            password: passLogRef.current.value
-        }
+  function register() {
+    if (isRegister) {
+      return <Redirect to="/register" />;
+    }
+  }
 
-        const callApi = async () => {
-            const instance = axios.create({
-                baseURL: 'http://localhost:8080',
-            });
-
-        const response = instance.post('/user/login', newUser)
-        
-        response.then(function (response) {
-            setLogedUser(response.data)
-            localStorage.setItem('userId', response.data.id)
-            localStorage.setItem('userLoged', JSON.stringify(response.data))
-            setIsLoged(true)   
-        })
-            .catch(function (error) {
-                console.log(error.data)
-            })
-        }
-
-        callApi()
-        cleanInputsLog()
-    }, [])
-
-    return (
-        <div className="Login">
-            <div className="loginLeft">
-                <div className="inputForm">
-                <h1>Entrar</h1>
-                <Input placeholder="email" type="email" name="E-mail:" childRef={emailLogRef} />
-                <Input placeholder="senha" type="password" name="Senha:" childRef={passLogRef} />
-                <Button className="buttonLogin" size="sm" onClick={onClickEntrar}>Entrar</Button>
-                <div>Não possui conta? </div><a href="#/register">Cadastre-se</a>
-                </div>
-            </div>
-            <div className="loginRight">
-                <Card id={logedUser.id} name={logedUser.name} email={logedUser.email} />
-                {isLoged && <button onClick={onClickSair}>Sair</button>}
-                <img src={Logo} className="imgLogin" alt="Talkative.logo"/>
-            </div>
+  return (
+    <>
+      {isLogged()}
+      {register()}
+      <Menu logged={false} ></Menu>
+      <div className="Login">
+        <div className="loginLeft">
+          <div className="inputForm">
+            <h1>Entrar</h1>
+            <Form>
+            <Input placeholder="email" type="email" name="E-mail:" childRef={emailLogRef} />
+            <Input placeholder="senha" type="password" name="Senha:" childRef={passLogRef} />
+            </Form>
+            <Button className="buttonLogin" size="sm" onClick={onClickEntrar}>Entrar</Button>
+            <div>Não possui conta? </div><a href="register" onClick={() => { setIsRegister(true) }} >Criar nova conta</a>
+          </div>
         </div>
-    );
+        <div className="loginRight">
+          <img src={Logo} className="imgLogin" alt="Talkative.logo" />
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default Login;
