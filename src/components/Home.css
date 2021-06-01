@@ -1,8 +1,35 @@
-.botoes {
+.menu {
     display: flex;
     flex-direction: row;
+    height: 90%;
 }
 
-.botao{
-    margin: 5%;
+.parte1 {
+    height: 100%;
+    flex: 1;
+}
+
+.parte2 {
+    flex: 2;
+}
+
+.body {
+    height: 100vh;
+    background: #343a40;
+}
+
+.feeling {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button1 {
+    display: grid;
+    width: 100%;
+}
+
+.button2 {
+    display: grid;
+    width: 100%;
 }

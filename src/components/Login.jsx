@@ -1,18 +1,15 @@
-import { Button } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import { useRef, useState } from 'react';
-import Card from './card/Card';
 import Input from './input/Input';
 import './Login.css'
 import Logo from '../img/Logo.png'
 import { Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { login } from '../redux/actions/user.actions';
 import UserService from '../data/user.service';
+import Menu from './Menu';
 
 const Login = (props) => {
-  const [logedUser, setLogedUser] = useState({})
-  const [isLoged, setIsLoged] = useState(false)
   const [isRegister, setIsRegister] = useState(false)
+  const [isLogin, setIsLogin] = useState(false)
 
   const emailLogRef = useRef(null);
   const passLogRef = useRef(null);
@@ -25,18 +22,13 @@ const Login = (props) => {
       password: passLogRef.current.value
     }
     
-
     let response = await userService.userLogin(newUser)
 
     if (response.status === 200 ){
-      console.log('sucesso')
       cleanInputsLog()
-      setIsLoged(true)
-      function singIn() {
-        console.log(login)
-        props.dispatch(login(newUser))
-      }
-      singIn()
+      localStorage.setItem("userLoged", JSON.stringify(response.data))
+      localStorage.setItem("isLogged", true)
+      setIsLogin(true)
     }else{
       console.log(response)
     }
@@ -51,20 +43,15 @@ const Login = (props) => {
     loginUser()
   }
 
-  const onClickSair = () => {
-    setLogedUser({})
-    setIsLoged(false)
-  }
 
   function isLogged() {
-    if (isLoged) {
+    if (isLogin) {
       return <Redirect to="/home" />;
     }
   }
 
   function register() {
     if (isRegister) {
-      console.log("register")
       return <Redirect to="/register" />;
     }
   }
@@ -73,19 +60,20 @@ const Login = (props) => {
     <>
       {isLogged()}
       {register()}
+      <Menu logged={false} ></Menu>
       <div className="Login">
         <div className="loginLeft">
           <div className="inputForm">
             <h1>Entrar</h1>
+            <Form>
             <Input placeholder="email" type="email" name="E-mail:" childRef={emailLogRef} />
             <Input placeholder="senha" type="password" name="Senha:" childRef={passLogRef} />
+            </Form>
             <Button className="buttonLogin" size="sm" onClick={onClickEntrar}>Entrar</Button>
             <div>Não possui conta? </div><a href="register" onClick={() => { setIsRegister(true) }} >Criar nova conta</a>
           </div>
         </div>
         <div className="loginRight">
-          <Card id={logedUser.id} name={logedUser.name} email={logedUser.email} />
-          {isLoged && <button onClick={onClickSair}>Sair</button>}
           <img src={Logo} className="imgLogin" alt="Talkative.logo" />
         </div>
       </div>
@@ -93,14 +81,4 @@ const Login = (props) => {
   );
 }
 
-const mapStateToProps = (store) => {
-  return {
-    user: store.UserReducer.user,
-    logged: store.UserReducer.logged,
-  };
-};
-
-export default connect(mapStateToProps)(Login);
-
-/*localStorage.setItem('userId', response.data.id)
-           localStorage.setItem('logedUser', JSON.stringify(response.data))*/
+export default Login;

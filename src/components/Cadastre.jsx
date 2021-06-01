@@ -4,15 +4,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import './Cadastre.css';
 import Input from './input/Input';
 import img from '../img/MeetOnl.webp'
-import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import Menu from './Menu';
 
 
 function Cadastre() {
   const [isCreated, setIsCreated] = useState(false)
   const [emailError, setEmailError] = useState(false)
-  const [isLogin, setIsLogin] = useState(false)
-
 
   const nameRef = useRef(null);
   const emailRef = useRef(null);
@@ -34,7 +31,7 @@ function Cadastre() {
       email: emailRef.current.value,
       password: passRef.current.value
     }
-  
+
     if (newUser.name === '') {
       nameRef.current.focus()
     } else if (newUser.email === '') {
@@ -68,49 +65,33 @@ function Cadastre() {
     }, 5000);
   }, [emailError])
 
-  const onClickRegister = useCallback(()=>{
-    setIsLogin(true)
-  },[])
-
-
-  function register() {
-    if (isLogin) {
-        console.log("register")
-      return <Redirect to="/register" />;
-    }
-  }
-
   return (
-    <div className="Cadastre">
-      <div className="registerLeft">
-        <img className="imgRegister" alt="MeetOnline" src={img} />
-      </div>
-      <div className="registerRight">
-        <div className="inputFormRegister">
-          <div className="modalCreated"></div>
-          <h1>Cadastre-se</h1>
-          <Input placeholder="nome" type="text" name="Nome" childRef={nameRef} id="name" />
-          <Input placeholder="email" type="email" name="E-mail" childRef={emailRef} id="email" />
-          {emailError && <Alert key='1' variant='danger'>Email já cadastrado ou inválido!</Alert>}
-          <Input placeholder="senha" type="password" name="Senha" childRef={passRef} id="password" />
-          <Button className="buttonRegister" size="sm" onClick={onClickCadastrar} >Cadastrar</Button>
-          <a href="/login" onClick={onClickRegister} >Voltar para tela de login</a>
-          {isCreated && 
-          <Alert variant="success" style={{ position: "absolute" }} onClose={() => setIsCreated(false)} dismissible>
-            <Alert.Heading>Seja bem vindo ao Talkative!</Alert.Heading>
-            <p>Sucesso ao realizar o cadastro</p>
-          </Alert>}
+    <>
+      <Menu logged={false} ></Menu>
+      <div className="Cadastre">
+        <div className="registerLeft">
+          <img className="imgRegister" alt="MeetOnline" src={img} />
+        </div>
+        <div className="registerRight">
+          <div className="inputFormRegister">
+            <div className="modalCreated"></div>
+            <h1>Cadastre-se</h1>
+            <Input placeholder="nome" type="text" name="Nome" childRef={nameRef} id="name" />
+            <Input placeholder="email" type="email" name="E-mail" childRef={emailRef} id="email" />
+            {emailError && <Alert key='1' variant='danger'>Email já cadastrado ou inválido!</Alert>}
+            <Input placeholder="senha" type="password" name="Senha" childRef={passRef} id="password" />
+            <Button className="buttonRegister" size="sm" onClick={onClickCadastrar} >Cadastrar</Button>
+            <a href="/login" >Voltar para tela de login</a>
+            {isCreated &&
+              <Alert variant="success" style={{ position: "absolute" }} onClose={() => setIsCreated(false)} dismissible>
+                <Alert.Heading>Seja bem vindo ao Talkative!</Alert.Heading>
+                <p>Sucesso ao realizar o cadastro</p>
+              </Alert>}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-const mapStateToProps = (store) => {
-  return {
-    user: store.UserReducer.user,
-    logged: store.UserReducer.logged,
-  };
-};
-
-export default connect(mapStateToProps)(Cadastre);
+export default Cadastre;
